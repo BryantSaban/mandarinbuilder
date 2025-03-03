@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mandarin Builder</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
@@ -17,17 +17,21 @@
     </ul>
   </nav>
 
-  <!-- SETTINGS BUTTON -->
+  <!-- SETTINGS BUTTON (BOTTOM LEFT) -->
   <div class="settings-button" id="settingsBtn">⚙</div>
 
   <!-- MAIN CONTENT -->
   <div class="main-content">
     
-    <!-- LEARN TAB (SENTENCE BUILDER) -->
+    <!-- LEARN (SENTENCE BUILDER) -->
     <section id="learn-section" class="tab-section active-section">
       <h1>Sentence Builder</h1>
       <div class="sentence-builder">
-        <input type="text" id="sentenceInput" placeholder="Type your sentence...">
+        <input
+          type="text"
+          id="sentenceInput"
+          placeholder="Type here to start building your sentence..."
+        />
         <button id="addWordBtn">Add Word</button>
       </div>
       <div class="word-bubbles" id="wordBubbles"></div>
@@ -35,12 +39,16 @@
       <div class="feedback" id="feedback"></div>
     </section>
 
-    <!-- PRACTICE TAB (CHATBOT) -->
+    <!-- PRACTICE (CHATBOT) -->
     <section id="practice-section" class="tab-section">
       <h1>Chinese Chatbot</h1>
       <div class="chatbot-container">
         <div class="chat-window" id="chatWindow"></div>
-        <input type="text" id="chatInput" placeholder="Type in Chinese or Pinyin...">
+        <input
+          type="text"
+          id="chatInput"
+          placeholder="Type in Chinese or Pinyin..."
+        />
         <button id="chatSendBtn">Send</button>
       </div>
       <div class="chatbot-controls">
@@ -52,7 +60,7 @@
       <div class="chat-subtitles" id="chatSubtitles"></div>
     </section>
 
-    <!-- JOURNEY TAB (CAMPAIGN MODE) -->
+    <!-- JOURNEY (CAMPAIGN MODE) -->
     <section id="journey-section" class="tab-section">
       <h1>Campaign Mode</h1>
       <p>Progress to the Emperor’s Palace!</p>
@@ -69,11 +77,40 @@
     </div>
   </div>
 
+  <!-- ANKI IMPORT SYSTEM -->
+  <div class="import-container">
+    <h2>Import Anki/Other Decks</h2>
+    <input type="file" id="importFile" accept=".apkg, .csv, .json">
+    <button id="importFlashcardsBtn">Import Deck</button>
+  </div>
+
+  <!-- ANIMATED TIGER (BOTTOM RIGHT) -->
+  <div class="tiger-container" id="tigerContainer">
+    <img src="https://via.placeholder.com/100x100?text=Tiger" alt="Tiger" id="tigerImage" />
+    <div class="tiger-speech" id="tigerSpeech">...</div>
+  </div>
+
   <!-- SETTINGS MODAL -->
   <div class="settings-modal" id="settingsModal">
     <h2>Settings</h2>
-    <label>Background</label>
-    <select id="backgroundSelect"></select>
+    <div class="setting-item">
+      <label>Light/Dark Mode</label>
+      <button id="toggleThemeBtn">Toggle</button>
+    </div>
+    <div class="setting-item">
+      <label>Background</label>
+      <select id="backgroundSelect"></select>
+    </div>
+    <div class="setting-item">
+      <label>Time of Day</label>
+      <select id="timeOfDaySelect">
+        <option value="auto">Auto</option>
+        <option value="morning">Morning</option>
+        <option value="midday">Midday</option>
+        <option value="sunset">Sunset</option>
+        <option value="night">Night</option>
+      </select>
+    </div>
     <button id="closeSettingsBtn">Close</button>
   </div>
 
