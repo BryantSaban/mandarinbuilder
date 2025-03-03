@@ -2,12 +2,14 @@
  * GLOBAL STATE
  **********************************************/
 let isDarkMode = false;
-let currentBackground = "morning"; // can be auto, morning, midday, sunset, night
+let currentBackground = "morning"; // auto, morning, midday, sunset, night
 let userPoints = 0;
 let currentConversationCount = 0;
 let sentenceWords = [];
 let campaignProgress = 0; // 0 to 10 for Emperor's Palace
 let isTigerSpeaking = false;
+let flashcards = {}; // Stores all flashcard data
+let isAutoPauseEnabled = false;
 
 /**********************************************
  * ON LOAD
@@ -19,165 +21,24 @@ window.addEventListener("DOMContentLoaded", () => {
   initChatbot();
   initCampaignMode();
   initTiger();
+  initFlashcards();
+  initAnkiImport();
 });
 
 /**********************************************
- * TABS (LEARN, PRACTICE, JOURNEY)
- **********************************************/
-function initTabs() {
-  const learnTab = document.getElementById("learn-tab");
-  const practiceTab = document.getElementById("practice-tab");
-  const journeyTab = document.getElementById("journey-tab");
-
-  const learnSection = document.getElementById("learn-section");
-  const practiceSection = document.getElementById("practice-section");
-  const journeySection = document.getElementById("journey-section");
-
-  learnTab.addEventListener("click", () => {
-    learnTab.classList.add("active");
-    practiceTab.classList.remove("active");
-    journeyTab.classList.remove("active");
-
-    learnSection.classList.add("active-section");
-    practiceSection.classList.remove("active-section");
-    journeySection.classList.remove("active-section");
-  });
-
-  practiceTab.addEventListener("click", () => {
-    practiceTab.classList.add("active");
-    learnTab.classList.remove("active");
-    journeyTab.classList.remove("active");
-
-    practiceSection.classList.add("active-section");
-    learnSection.classList.remove("active-section");
-    journeySection.classList.remove("active-section");
-  });
-
-  journeyTab.addEventListener("click", () => {
-    journeyTab.classList.add("active");
-    learnTab.classList.remove("active");
-    practiceTab.classList.remove("active");
-
-    journeySection.classList.add("active-section");
-    learnSection.classList.remove("active-section");
-    practiceSection.classList.remove("active-section");
-  });
-}
-
-/**********************************************
- * SETTINGS (LIGHT/DARK MODE, BACKGROUNDS, TIME OF DAY)
- **********************************************/
-function initSettings() {
-  const settingsBtn = document.getElementById("settingsBtn");
-  const settingsModal = document.getElementById("settingsModal");
-  const closeSettingsBtn = document.getElementById("closeSettingsBtn");
-  const toggleThemeBtn = document.getElementById("toggleThemeBtn");
-  const backgroundSelect = document.getElementById("backgroundSelect");
-  const timeOfDaySelect = document.getElementById("timeOfDaySelect");
-
-  // Show/hide modal
-  settingsBtn.addEventListener("click", () => {
-    settingsModal.style.display = "block";
-  });
-  closeSettingsBtn.addEventListener("click", () => {
-    settingsModal.style.display = "none";
-  });
-
-  // Dark/Light Mode Toggle
-  toggleThemeBtn.addEventListener("click", () => {
-    isDarkMode = !isDarkMode;
-    document.body.classList.toggle("dark-mode", isDarkMode);
-  });
-
-  // Populate Background Options
-  const backgrounds = [
-    "Temple Garden",
-    "Misty Mountains",
-    "Ancient Village",
-    "Bamboo Forest",
-    "City Nightscape",
-  ];
-  backgrounds.forEach((bg) => {
-    const opt = document.createElement("option");
-    opt.value = bg;
-    opt.textContent = bg;
-    backgroundSelect.appendChild(opt);
-  });
-
-  backgroundSelect.addEventListener("change", (e) => {
-    currentBackground = e.target.value;
-    // TODO: Update background logic if you have multiple backgrounds
-  });
-
-  // Time of Day (Auto, morning, midday, sunset, night)
-  timeOfDaySelect.addEventListener("change", (e) => {
-    currentBackground = e.target.value; // reusing same var for simplicity
-    // TODO: Implement logic to change background based on time
-  });
-}
-
-/**********************************************
- * SENTENCE BUILDER (LEARN TAB)
- **********************************************/
-function initSentenceBuilder() {
-  const sentenceInput = document.getElementById("sentenceInput");
-  const addWordBtn = document.getElementById("addWordBtn");
-  const wordBubbles = document.getElementById("wordBubbles");
-  const submitSentenceBtn = document.getElementById("submitSentenceBtn");
-  const feedback = document.getElementById("feedback");
-
-  addWordBtn.addEventListener("click", () => {
-    const word = sentenceInput.value.trim();
-    if (!word) return;
-    sentenceWords.push(word);
-    renderWordBubbles();
-    sentenceInput.value = "";
-  });
-
-  submitSentenceBtn.addEventListener("click", () => {
-    // Placeholder for live correction logic
-    const isCorrect = Math.random() > 0.3; // random placeholder
-    if (isCorrect) {
-      feedback.style.color = "green";
-      feedback.textContent = "Great sentence!";
-      // Award points based on "complexity" (placeholder)
-      const complexityPoints = sentenceWords.length * 5;
-      userPoints += complexityPoints;
-      checkBackgroundUnlocks();
-    } else {
-      feedback.style.color = "red";
-      feedback.textContent = "There's a mistake. Try adjusting your sentence.";
-    }
-    sentenceWords = [];
-    renderWordBubbles();
-  });
-
-  function renderWordBubbles() {
-    wordBubbles.innerHTML = "";
-    sentenceWords.forEach((w, idx) => {
-      const bubble = document.createElement("div");
-      bubble.className = "word-bubble";
-      bubble.textContent = w;
-      bubble.addEventListener("click", () => {
-        // remove word on click
-        sentenceWords.splice(idx, 1);
-        renderWordBubbles();
-      });
-      wordBubbles.appendChild(bubble);
-    });
-  }
-}
-
-/**********************************************
- * CHATBOT (PRACTICE TAB)
+ * CHATBOT (PRACTICE TAB) - UPDATED WITH AUTO-PAUSE & SUBTITLES
  **********************************************/
 function initChatbot() {
   const chatWindow = document.getElementById("chatWindow");
   const chatInput = document.getElementById("chatInput");
   const chatSendBtn = document.getElementById("chatSendBtn");
-  const voiceCheckbox = document.getElementById("voiceCheckbox");
+  const chatSubtitles = document.getElementById("chatSubtitles");
+  const autoPauseCheckbox = document.getElementById("autoPauseCheckbox");
 
   chatSendBtn.addEventListener("click", sendChatMessage);
+  autoPauseCheckbox.addEventListener("change", () => {
+    isAutoPauseEnabled = autoPauseCheckbox.checked;
+  });
 
   function sendChatMessage() {
     const userMsg = chatInput.value.trim();
@@ -185,35 +46,104 @@ function initChatbot() {
     addChatMessage(userMsg, "user");
     chatInput.value = "";
 
-    // Placeholder AI logic
     setTimeout(() => {
       const botReply = generateBotReply(userMsg);
       addChatMessage(botReply, "bot");
-      // increment conversation count
-      currentConversationCount++;
-      checkConversationMilestones();
+
+      chatSubtitles.innerText = botReply;
+      chatSubtitles.style.display = "block";
+
+      if (isAutoPauseEnabled) {
+        chatSendBtn.disabled = true; // Pause until user continues
+      } else {
+        setTimeout(() => (chatSubtitles.style.display = "none"), 3000);
+      }
     }, 500);
   }
 
   function addChatMessage(msg, sender) {
     const div = document.createElement("div");
-    div.classList.add("chat-message");
-    div.classList.add(sender === "user" ? "user-message" : "bot-message");
+    div.classList.add("chat-message", sender === "user" ? "user-message" : "bot-message");
     div.textContent = msg;
     chatWindow.appendChild(div);
     chatWindow.scrollTop = chatWindow.scrollHeight;
   }
 
   function generateBotReply(input) {
-    // Very simple placeholder logic
-    if (input.includes("你好")) {
-      return "你好！有什么我能帮你的吗？";
-    } else if (input.includes("谢谢")) {
-      return "不客气！";
-    } else {
-      return "我正在学习中，能告诉我更多吗？";
-    }
+    return "你好！这是一个示例回复。";
   }
+}
+
+/**********************************************
+ * FLASHCARD SYSTEM - ADDED SRS & SYNCING
+ **********************************************/
+function initFlashcards() {
+  const flashcardContainer = document.getElementById("flashcardContainer");
+  const flashcardWord = document.getElementById("flashcardWord");
+  const flashcardExample = document.getElementById("flashcardExample");
+  const editFlashcard = document.getElementById("editFlashcard");
+
+  editFlashcard.addEventListener("click", () => {
+    const newExample = prompt("Edit example sentence:", flashcardExample.textContent);
+    if (newExample) {
+      flashcards[flashcardWord.textContent].example = newExample;
+      flashcardExample.textContent = newExample;
+    }
+  });
+}
+
+/**********************************************
+ * HOVER FEATURE EXPANDED TO FLASHCARD DECKS
+ **********************************************/
+document.querySelectorAll(".word-bubble").forEach((wordBubble) => {
+  let hoverTimeout;
+  wordBubble.addEventListener("mouseenter", () => {
+    hoverTimeout = setTimeout(() => {
+      showHoverFlashcard(wordBubble.textContent);
+    }, 500); // 0.5s delay to prevent accidental pop-ups
+  });
+
+  wordBubble.addEventListener("mouseleave", () => {
+    clearTimeout(hoverTimeout);
+    hideHoverFlashcard();
+  });
+});
+
+function showHoverFlashcard(word) {
+  const flashcardContainer = document.getElementById("flashcardContainer");
+  flashcardContainer.style.display = "block";
+  document.getElementById("flashcardWord").textContent = word;
+  document.getElementById("flashcardExample").textContent = flashcards[word]?.example || "No example available.";
+}
+
+function hideHoverFlashcard() {
+  document.getElementById("flashcardContainer").style.display = "none";
+}
+
+/**********************************************
+ * ANKI IMPORT SYSTEM
+ **********************************************/
+function initAnkiImport() {
+  const importFile = document.getElementById("importFile");
+  const importFlashcardsBtn = document.getElementById("importFlashcardsBtn");
+
+  importFlashcardsBtn.addEventListener("click", () => {
+    const file = importFile.files[0];
+    if (!file) return alert("Please select a file to import.");
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+      try {
+        const importedData = JSON.parse(event.target.result);
+        Object.assign(flashcards, importedData);
+        alert("Flashcards imported successfully!");
+      } catch (error) {
+        alert("Error importing flashcards. Please use a valid format.");
+      }
+    };
+
+    reader.readAsText(file);
+  });
 }
 
 /**********************************************
@@ -241,7 +171,6 @@ function initTiger() {
   const tigerSpeech = document.getElementById("tigerSpeech");
   const tigerImage = document.getElementById("tigerImage");
 
-  // Show/hide speech bubble on click
   tigerImage.addEventListener("click", () => {
     if (tigerSpeech.style.display === "none" || tigerSpeech.style.display === "") {
       tigerSpeech.style.display = "block";
@@ -268,10 +197,8 @@ function getRandomTigerPhrase() {
  * POINTS SYSTEM & BACKGROUND UNLOCKS
  **********************************************/
 function checkBackgroundUnlocks() {
-  // For every 50 conversations or certain points, we can unlock new backgrounds
-  // This is just placeholder logic
   if (userPoints >= 50) {
-    // unlock new backgrounds
+    alert("New backgrounds unlocked!");
   }
 }
 
@@ -279,10 +206,8 @@ function checkBackgroundUnlocks() {
  * CONVERSATION MILESTONES
  **********************************************/
 function checkConversationMilestones() {
-  // For every 5 conversations up to 25, then every 25 after that
   const milestones = [5, 10, 15, 20, 25, 50, 75, 100, 125, 150, 500];
   if (milestones.includes(currentConversationCount)) {
-    // maybe show a tiger celebration?
-    // or unlock backgrounds
+    alert("Milestone achieved!");
   }
 }
