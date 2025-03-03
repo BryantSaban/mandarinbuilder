@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mandarin Builder</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
   <!-- TOP LEFT NAVIGATION -->
   <nav class="top-left-nav">
     <ul>
@@ -15,20 +17,17 @@
     </ul>
   </nav>
 
-  <!-- SETTINGS BUTTON (BOTTOM LEFT) -->
+  <!-- SETTINGS BUTTON -->
   <div class="settings-button" id="settingsBtn">⚙</div>
 
   <!-- MAIN CONTENT -->
   <div class="main-content">
-    <!-- LEARN (SENTENCE BUILDER) -->
+    
+    <!-- LEARN TAB (SENTENCE BUILDER) -->
     <section id="learn-section" class="tab-section active-section">
       <h1>Sentence Builder</h1>
       <div class="sentence-builder">
-        <input
-          type="text"
-          id="sentenceInput"
-          placeholder="Type here to start building your sentence..."
-        />
+        <input type="text" id="sentenceInput" placeholder="Type your sentence...">
         <button id="addWordBtn">Add Word</button>
       </div>
       <div class="word-bubbles" id="wordBubbles"></div>
@@ -36,25 +35,24 @@
       <div class="feedback" id="feedback"></div>
     </section>
 
-    <!-- PRACTICE (CHATBOT) -->
+    <!-- PRACTICE TAB (CHATBOT) -->
     <section id="practice-section" class="tab-section">
       <h1>Chinese Chatbot</h1>
       <div class="chatbot-container">
         <div class="chat-window" id="chatWindow"></div>
-        <input
-          type="text"
-          id="chatInput"
-          placeholder="Type in Chinese or Pinyin..."
-        />
+        <input type="text" id="chatInput" placeholder="Type in Chinese or Pinyin...">
         <button id="chatSendBtn">Send</button>
       </div>
-      <div class="voice-toggle">
+      <div class="chatbot-controls">
         <label>Enable Voice?</label>
-        <input type="checkbox" id="voiceCheckbox" />
+        <input type="checkbox" id="voiceCheckbox">
+        <label>Auto Pause</label>
+        <input type="checkbox" id="autoPauseCheckbox">
       </div>
+      <div class="chat-subtitles" id="chatSubtitles"></div>
     </section>
 
-    <!-- JOURNEY (CAMPAIGN MODE) -->
+    <!-- JOURNEY TAB (CAMPAIGN MODE) -->
     <section id="journey-section" class="tab-section">
       <h1>Campaign Mode</h1>
       <p>Progress to the Emperor’s Palace!</p>
@@ -62,42 +60,25 @@
     </section>
   </div>
 
-  <!-- ANIMATED TIGER (BOTTOM RIGHT) -->
-  <div class="tiger-container" id="tigerContainer">
-    <!-- Replace 'tiger-thinking.png' with any image you like -->
-    <img
-      src="https://via.placeholder.com/100x100?text=Tiger"
-      alt="Tiger"
-      id="tigerImage"
-    />
-    <div class="tiger-speech" id="tigerSpeech">...</div>
+  <!-- FLASHCARD SYSTEM -->
+  <div class="flashcard-container" id="flashcardContainer">
+    <div class="flashcard" id="flashcard">
+      <p id="flashcardWord"></p>
+      <p id="flashcardExample"></p>
+      <button id="editFlashcard">Edit</button>
+    </div>
   </div>
 
   <!-- SETTINGS MODAL -->
   <div class="settings-modal" id="settingsModal">
     <h2>Settings</h2>
-    <div class="setting-item">
-      <label>Light/Dark Mode</label>
-      <button id="toggleThemeBtn">Toggle</button>
-    </div>
-    <div class="setting-item">
-      <label>Background</label>
-      <select id="backgroundSelect"></select>
-    </div>
-    <div class="setting-item">
-      <label>Time of Day</label>
-      <select id="timeOfDaySelect">
-        <option value="auto">Auto</option>
-        <option value="morning">Morning</option>
-        <option value="midday">Midday</option>
-        <option value="sunset">Sunset</option>
-        <option value="night">Night</option>
-      </select>
-    </div>
+    <label>Background</label>
+    <select id="backgroundSelect"></select>
     <button id="closeSettingsBtn">Close</button>
   </div>
 
   <!-- MAIN SCRIPT -->
   <script src="script.js"></script>
+
 </body>
 </html>
