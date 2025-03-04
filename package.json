@@ -1,9 +1,10 @@
 {
   "name": "mandarin-builder",
   "version": "1.0.0",
+  "private": true,
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && node ./renameBuild.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
