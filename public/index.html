@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mandarin Builder</title>
-<link rel="stylesheet" href="styles.css">
+  
+  <!-- Stylesheet with cache busting -->
+  <link rel="stylesheet" href="styles.css?v=1.0">
 </head>
 <body>
   
@@ -27,11 +29,7 @@
     <section id="learn-section" class="tab-section active-section">
       <h1>Sentence Builder</h1>
       <div class="sentence-builder">
-        <input
-          type="text"
-          id="sentenceInput"
-          placeholder="Type here to start building your sentence..."
-        />
+        <input type="text" id="sentenceInput" placeholder="Type here to start building your sentence..."/>
         <button id="addWordBtn">Add Word</button>
       </div>
       <div class="word-bubbles" id="wordBubbles"></div>
@@ -44,11 +42,7 @@
       <h1>Chinese Chatbot</h1>
       <div class="chatbot-container">
         <div class="chat-window" id="chatWindow"></div>
-        <input
-          type="text"
-          id="chatInput"
-          placeholder="Type in Chinese or Pinyin..."
-        />
+        <input type="text" id="chatInput" placeholder="Type in Chinese or Pinyin..."/>
         <button id="chatSendBtn">Send</button>
       </div>
       <div class="chatbot-controls">
@@ -86,7 +80,8 @@
 
   <!-- ANIMATED TIGER (BOTTOM RIGHT) -->
   <div class="tiger-container" id="tigerContainer">
-    <img src="https://via.placeholder.com/100x100?text=Tiger" alt="Tiger" id="tigerImage" />
+    <!-- Using a local image fallback -->
+    <img src="tiger.png" alt="Tiger" id="tigerImage" onerror="this.onerror=null; this.src='https://dummyimage.com/100x100/000/fff&text=Tiger';" />
     <div class="tiger-speech" id="tigerSpeech">...</div>
   </div>
 
@@ -119,4 +114,3 @@
 
 </body>
 </html>
- 
