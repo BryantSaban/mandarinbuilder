@@ -29,6 +29,22 @@ export default function ImageSlideshow() {
       url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/roof-4456833.jpg-O6naQ1I4V6HJjtgULyonPgl74mrFXE.jpeg",
       alt: "Traditional Chinese buildings with curved roofs",
     },
+    {
+      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/lugu-lake-4648775.jpg-ZQiG8ENNHJ14QvAUDH7n0iGqyGfvA2.jpeg",
+      alt: "Traditional village on Lugu Lake surrounded by mountains",
+    },
+    {
+      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/yellow-mountains-532857.jpg-Shjh5CwsvI1WxMAfdFY8xB49aClPc8.jpeg",
+      alt: "Yellow Mountains with dramatic peaks above sea of clouds",
+    },
+    {
+      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/great-wall-of-china-3022907.jpg-OGYV3MUqkMdAHXSsPQZJWFBFTmmvIF.jpeg",
+      alt: "Great Wall of China winding through misty mountains",
+    },
+    {
+      url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/road-4103334.jpg-f77OkGd07yFi7ZyTW6nllfMDRlGIyO.jpeg",
+      alt: "Vibrant night street with neon Chinese signs in urban setting",
+    },
   ]
 
   useEffect(() => {
