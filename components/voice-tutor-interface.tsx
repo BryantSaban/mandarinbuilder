@@ -15,6 +15,7 @@ export default function VoiceTutorInterface({ onClose }: VoiceTutorInterfaceProp
   const [isProcessing, setIsProcessing] = useState(false)
   const [tutorResponse, setTutorResponse] = useState("")
   const recognitionRef = useRef<any>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   // Initialize speech recognition
   useEffect(() => {
@@ -59,10 +60,21 @@ export default function VoiceTutorInterface({ onClose }: VoiceTutorInterfaceProp
       }
     }
 
+    // Create audio element
+    if (typeof window !== "undefined") {
+      audioRef.current = new Audio()
+    }
+
     return () => {
       // Clean up
       if (recognitionRef.current) {
         recognitionRef.current.abort()
+      }
+
+      // Clean up audio element
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current.src = ""
       }
     }
   }, [])
@@ -82,7 +94,15 @@ export default function VoiceTutorInterface({ onClose }: VoiceTutorInterfaceProp
         "非常好！你的中文进步很快。(Fēicháng hǎo! Nǐ de zhōngwén jìnbù hěn kuài.) Excellent! Your Chinese is improving quickly.",
       ]
 
-      setTutorResponse(responses[Math.floor(Math.random() * responses.length)])
+      const response = responses[Math.floor(Math.random() * responses.length)]
+      setTutorResponse(response)
+
+      // Extract Chinese text (everything before the first parenthesis)
+      const chineseText = response.match(/^([^(]+)/)
+      if (chineseText && chineseText[1]) {
+        // Play the Chinese part of the response
+        await playAudio(chineseText[1].trim())
+      }
     } catch (error) {
       console.error("Error processing speech:", error)
     } finally {
@@ -113,6 +133,91 @@ export default function VoiceTutorInterface({ onClose }: VoiceTutorInterfaceProp
         setIsListening(false)
       }
     }
+  }
+
+  // Add this function after the toggleListening function
+  const playAudio = async (text: string) => {
+    try {
+      // Get the audio data from our API
+      const response = await fetch("/api/tts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to get audio data")
+      }
+
+      const data = await response.json()
+
+      if (data.error) {
+        throw new Error(data.error)
+      }
+
+      if (data.audioData) {
+        await playAudioFromDataUrl(data.audioData)
+      } else {
+        throw new Error("No audio data received")
+      }
+    } catch (error) {
+      console.error("Error playing audio:", error)
+    }
+  }
+
+  // Play audio from data URL
+  const playAudioFromDataUrl = (dataUrl: string): Promise<void> => {
+    return new Promise((resolve) => {
+      if (!audioRef.current) {
+        audioRef.current = new Audio()
+      }
+
+      const audio = audioRef.current
+
+      // Remove any existing event listeners
+      audio.oncanplaythrough = null
+      audio.onended = null
+      audio.onerror = null
+
+      // Set up new event listeners
+      audio.oncanplaythrough = () => {
+        audio.play().catch((err) => {
+          console.error("Audio play error:", err)
+          resolve()
+        })
+      }
+
+      audio.onended = () => {
+        resolve()
+      }
+
+      audio.onerror = (e) => {
+        console.error("Audio error:", e)
+        resolve()
+      }
+
+      // Set a timeout in case the audio never loads or plays
+      const timeout = setTimeout(() => {
+        console.warn("Audio playback timeout")
+        resolve()
+      }, 5000)
+
+      // Update onended to clear the timeout
+      const originalOnEnded = audio.onended
+      audio.onended = () => {
+        clearTimeout(timeout)
+        if (originalOnEnded) {
+          originalOnEnded.call(audio)
+        }
+        resolve()
+      }
+
+      // Set the source and load
+      audio.src = dataUrl
+      audio.load()
+    })
   }
 
   return (

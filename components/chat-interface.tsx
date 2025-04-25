@@ -23,7 +23,6 @@ export default function ChatInterface() {
   const [isProcessingAudio, setIsProcessingAudio] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [voiceChatEnabled, setVoiceChatEnabled] = useState(true)
-  const [voicesLoaded, setVoicesLoaded] = useState(false)
   const [displayMessages, setDisplayMessages] = useState<Message[]>([
     {
       id: "welcome",
@@ -34,6 +33,7 @@ export default function ChatInterface() {
     },
   ])
   const recognitionRef = useRef<any>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
 
   // Use the AI SDK's useChat hook for handling chat state and API calls
   const { messages, input, handleInputChange, handleSubmit, isLoading, error, setInput } = useChat({
@@ -51,7 +51,7 @@ export default function ChatInterface() {
     },
   })
 
-  // Initialize speech recognition and synthesis
+  // Initialize speech recognition
   useEffect(() => {
     // Initialize speech recognition
     if (typeof window !== "undefined") {
@@ -99,21 +99,9 @@ export default function ChatInterface() {
       }
     }
 
-    // Initialize speech synthesis
-    if (typeof window !== "undefined" && window.speechSynthesis) {
-      // Load voices
-      const loadVoices = () => {
-        const voices = window.speechSynthesis.getVoices()
-        if (voices.length > 0) {
-          setVoicesLoaded(true)
-        }
-      }
-
-      // Try to load voices immediately
-      loadVoices()
-
-      // Chrome needs this event to load voices
-      window.speechSynthesis.onvoiceschanged = loadVoices
+    // Create audio element
+    if (typeof window !== "undefined") {
+      audioRef.current = new Audio()
     }
 
     return () => {
@@ -122,6 +110,12 @@ export default function ChatInterface() {
         recognitionRef.current.abort()
       }
       cleanupAudio()
+
+      // Clean up audio element
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current.src = ""
+      }
     }
   }, [setInput])
 
@@ -157,7 +151,7 @@ export default function ChatInterface() {
   const handlePlayAudio = async (text: string) => {
     setIsProcessingAudio(true)
     try {
-      // Get the fallback URL from our API
+      // Get the audio data from our API
       const response = await fetch("/api/tts", {
         method: "POST",
         headers: {
@@ -167,69 +161,19 @@ export default function ChatInterface() {
       })
 
       if (!response.ok) {
-        throw new Error("Failed to get audio URL")
+        throw new Error("Failed to get audio data")
       }
 
       const data = await response.json()
 
-      // Try browser's speech synthesis first
-      let speechSynthesisWorked = false
-
-      if (typeof window !== "undefined" && window.speechSynthesis && voicesLoaded) {
-        try {
-          await new Promise<void>((resolve, reject) => {
-            const utterance = new SpeechSynthesisUtterance(text)
-            utterance.lang = "zh-CN"
-
-            utterance.onend = () => {
-              speechSynthesisWorked = true
-              resolve()
-            }
-
-            utterance.onerror = (event) => {
-              reject(new Error("Speech synthesis failed"))
-            }
-
-            // Set a timeout in case onend doesn't fire
-            const timeout = setTimeout(() => {
-              window.speechSynthesis.cancel()
-              reject(new Error("Speech synthesis timeout"))
-            }, 5000)
-
-            utterance.onend = () => {
-              clearTimeout(timeout)
-              speechSynthesisWorked = true
-              resolve()
-            }
-
-            window.speechSynthesis.speak(utterance)
-          })
-        } catch (error) {
-          console.error("Speech synthesis failed:", error)
-          // Continue to fallback
-        }
+      if (data.error) {
+        throw new Error(data.error)
       }
 
-      // If speech synthesis didn't work, use the fallback
-      if (!speechSynthesisWorked && data.fallbackUrl) {
-        await new Promise<void>((resolve) => {
-          const audio = new Audio(data.fallbackUrl)
-
-          audio.oncanplaythrough = () => {
-            audio.play().catch((err) => {
-              console.error("Audio playback error:", err)
-              resolve()
-            })
-          }
-
-          audio.onended = () => resolve()
-          audio.onerror = () => resolve()
-
-          // Set a timeout in case the audio never loads or plays
-          setTimeout(resolve, 5000)
-
-          audio.load()
-        })
+      if (data.audioData) {
+        await playAudioFromDataUrl(data.audioData)
+      } else {
+        throw new Error("No audio data received")
       }
     } catch (error) {
       console.error("Error playing audio:", error)
@@ -237,6 +181,59 @@ export default function ChatInterface() {
     } finally {
       setIsProcessingAudio(false)
     }
+  }
+
+  // Play audio from data URL
+  const playAudioFromDataUrl = (dataUrl: string): Promise<void> => {
+    return new Promise((resolve) => {
+      if (!audioRef.current) {
+        audioRef.current = new Audio()
+      }
+
+      const audio = audioRef.current
+
+      // Remove any existing event listeners
+      audio.oncanplaythrough = null
+      audio.onended = null
+      audio.onerror = null
+
+      // Set up new event listeners
+      audio.oncanplaythrough = () => {
+        audio.play().catch((err) => {
+          console.error("Audio play error:", err)
+          resolve()
+        })
+      }
+
+      audio.onended = () => {
+        resolve()
+      }
+
+      audio.onerror = (e) => {
+        console.error("Audio error:", e)
+        resolve()
+      }
+
+      // Set a timeout in case the audio never loads or plays
+      const timeout = setTimeout(() => {
+        console.warn("Audio playback timeout")
+        resolve()
+      }, 5000)
+
+      // Update onended to clear the timeout
+      const originalOnEnded = audio.onended
+      audio.onended = () => {
+        clearTimeout(timeout)
+        if (originalOnEnded) {
+          originalOnEnded.call(audio)
+        }
+        resolve()
+      }
+
+      // Set the source and load
+      audio.src = dataUrl
+      audio.load()
+    })
   }
 
   // Helper function to show error toast
