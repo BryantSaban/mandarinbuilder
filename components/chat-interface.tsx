@@ -23,6 +23,7 @@ export default function ChatInterface() {
   const [isProcessingAudio, setIsProcessingAudio] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [voiceChatEnabled, setVoiceChatEnabled] = useState(true)
+  const [selectedVoice, setSelectedVoice] = useState("alloy")
   const [displayMessages, setDisplayMessages] = useState<Message[]>([
     {
       id: "welcome",
@@ -151,33 +152,39 @@ export default function ChatInterface() {
   const handlePlayAudio = async (text: string) => {
     setIsProcessingAudio(true)
     try {
+      console.log("Requesting TTS for text:", text.substring(0, 20) + "...")
+
       // Get the audio data from our API
       const response = await fetch("/api/tts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text, voice: selectedVoice }),
       })
 
-      if (!response.ok) {
-        throw new Error("Failed to get audio data")
-      }
-
       const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status} - ${data.error || "Unknown error"}`)
+      }
 
       if (data.error) {
         throw new Error(data.error)
       }
 
       if (data.audioData) {
+        console.log("Audio data received, playing audio...")
         await playAudioFromDataUrl(data.audioData)
+        if (data.fallback) {
+          console.log("Used fallback TTS service")
+        }
       } else {
-        throw new Error("No audio data received")
+        throw new Error("No audio data received from API")
       }
     } catch (error) {
       console.error("Error playing audio:", error)
-      showErrorToast("Could not play audio. Please try again.")
+      showErrorToast(`Could not play audio: ${error instanceof Error ? error.message : "Unknown error"}`)
     } finally {
       setIsProcessingAudio(false)
     }
@@ -241,11 +248,14 @@ export default function ChatInterface() {
     const errorMessage = document.createElement("div")
     errorMessage.textContent = message
     errorMessage.style.cssText =
-      "position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(220, 38, 38, 0.9); color: white; padding: 8px 16px; border-radius: 4px; z-index: 9999;"
+      "position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(220, 38, 38, 0.9); color: white; padding: 12px 20px; border-radius: 8px; z-index: 9999; font-size: 14px; max-width: 80%; text-align: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"
     document.body.appendChild(errorMessage)
+
+    console.error("Error toast shown:", message)
+
     setTimeout(() => {
       document.body.removeChild(errorMessage)
-    }, 3000)
+    }, 5000) // Show for 5 seconds instead of 3
   }
 
   // Update display messages when user sends a message
@@ -455,6 +465,8 @@ export default function ChatInterface() {
         onClose={() => setIsSettingsOpen(false)}
         voiceChatEnabled={voiceChatEnabled}
         setVoiceChatEnabled={setVoiceChatEnabled}
+        selectedVoice={selectedVoice}
+        setSelectedVoice={setSelectedVoice}
       />
     </div>
   )

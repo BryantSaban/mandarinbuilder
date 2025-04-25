@@ -15,6 +15,7 @@ export default function ConversationPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [voiceChatEnabled, setVoiceChatEnabled] = useState(true)
+  const [selectedVoice, setSelectedVoice] = useState("alloy")
   const [subtitles, setSubtitles] = useState<string[]>([])
   const [showSubtitles, setShowSubtitles] = useState(false)
   const [isTutorActive, setIsTutorActive] = useState(false)
@@ -90,7 +91,7 @@ export default function ConversationPage() {
       >
         <div className="w-full max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl md:text-4xl font-bold text-purple-600 dark:text-purple-400">
+            <h1 className="text-3xl md:text-4xl font-bold text-purple-600 dark:text-purple-400 text-shadow-md bg-white/10 dark:bg-black/20 backdrop-blur-sm px-4 py-2 rounded-lg border-l-4 border-purple-500 dark:border-purple-400">
               Conversation Practice
             </h1>
             <Button
@@ -193,10 +194,12 @@ export default function ConversationPage() {
           onClose={() => setIsSettingsOpen(false)}
           voiceChatEnabled={voiceChatEnabled}
           setVoiceChatEnabled={setVoiceChatEnabled}
+          selectedVoice={selectedVoice}
+          setSelectedVoice={setSelectedVoice}
         />
 
         {/* Voice Tutor Interface */}
-        {isTutorActive && <VoiceTutorInterface onClose={toggleTutor} />}
+        {isTutorActive && <VoiceTutorInterface onClose={toggleTutor} selectedVoice={selectedVoice} />}
       </div>
 
       {/* Back button */}

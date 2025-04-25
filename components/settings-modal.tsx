@@ -10,9 +10,18 @@ interface SettingsModalProps {
   onClose: () => void
   voiceChatEnabled: boolean
   setVoiceChatEnabled: (enabled: boolean) => void
+  selectedVoice?: string
+  setSelectedVoice?: (voice: string) => void
 }
 
-export default function SettingsModal({ isOpen, onClose, voiceChatEnabled, setVoiceChatEnabled }: SettingsModalProps) {
+export default function SettingsModal({
+  isOpen,
+  onClose,
+  voiceChatEnabled,
+  setVoiceChatEnabled,
+  selectedVoice = "alloy",
+  setSelectedVoice = () => {},
+}: SettingsModalProps) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
@@ -66,15 +75,17 @@ export default function SettingsModal({ isOpen, onClose, voiceChatEnabled, setVo
             <Label htmlFor="voice-selection" className="text-base font-medium">
               Voice Selection
             </Label>
-            <Select defaultValue="xiaoxiao">
+            <Select value={selectedVoice} onValueChange={setSelectedVoice}>
               <SelectTrigger id="voice-selection" className="w-full">
                 <SelectValue placeholder="Select a voice" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="xiaoxiao">Xiao Xiao (Female)</SelectItem>
-                <SelectItem value="yunxi">Yun Xi (Male)</SelectItem>
-                <SelectItem value="xiaochen">Xiao Chen (Female - Youthful)</SelectItem>
-                <SelectItem value="yunyang">Yun Yang (Male - Mature)</SelectItem>
+                <SelectItem value="alloy">Alloy (Balanced)</SelectItem>
+                <SelectItem value="echo">Echo (Male)</SelectItem>
+                <SelectItem value="fable">Fable (Youthful)</SelectItem>
+                <SelectItem value="onyx">Onyx (Deep Male)</SelectItem>
+                <SelectItem value="nova">Nova (Female)</SelectItem>
+                <SelectItem value="shimmer">Shimmer (Friendly Female)</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-sm text-gray-500 dark:text-gray-400">Choose the voice for audio responses</p>

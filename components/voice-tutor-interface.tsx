@@ -7,9 +7,10 @@ import { cn } from "@/lib/utils"
 
 interface VoiceTutorInterfaceProps {
   onClose: () => void
+  selectedVoice?: string
 }
 
-export default function VoiceTutorInterface({ onClose }: VoiceTutorInterfaceProps) {
+export default function VoiceTutorInterface({ onClose, selectedVoice = "nova" }: VoiceTutorInterfaceProps) {
   const [isListening, setIsListening] = useState(false)
   const [userSpeech, setUserSpeech] = useState("")
   const [isProcessing, setIsProcessing] = useState(false)
@@ -138,17 +139,20 @@ export default function VoiceTutorInterface({ onClose }: VoiceTutorInterfaceProp
   // Add this function after the toggleListening function
   const playAudio = async (text: string) => {
     try {
+      console.log("Voice tutor requesting TTS for text:", text.substring(0, 20) + "...")
+
       // Get the audio data from our API
       const response = await fetch("/api/tts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text, voice: selectedVoice }),
       })
 
       if (!response.ok) {
-        throw new Error("Failed to get audio data")
+        const errorData = await response.json()
+        throw new Error(`API error: ${response.status} - ${errorData.error || "Unknown error"}`)
       }
 
       const data = await response.json()
@@ -158,12 +162,17 @@ export default function VoiceTutorInterface({ onClose }: VoiceTutorInterfaceProp
       }
 
       if (data.audioData) {
+        console.log("Voice tutor received audio data, playing...")
         await playAudioFromDataUrl(data.audioData)
+        if (data.fallback) {
+          console.log("Voice tutor used fallback TTS service")
+        }
       } else {
-        throw new Error("No audio data received")
+        throw new Error("No audio data received from API")
       }
     } catch (error) {
-      console.error("Error playing audio:", error)
+      console.error("Voice tutor error playing audio:", error)
+      // Consider adding a visual error indicator here
     }
   }
 

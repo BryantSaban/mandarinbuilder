@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Menu, X, Home, Brain, BookOpen, MessageSquare, Map, MessageCircle } from "lucide-react"
+import { Menu, X, Home, Brain, BookOpen, MessageSquare, Map } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export default function NavigationMenu() {
@@ -18,7 +18,6 @@ export default function NavigationMenu() {
     { name: "Learn", href: "/learn", icon: <BookOpen className="h-5 w-5 mr-2" /> },
     { name: "Practice", href: "/practice", icon: <MessageSquare className="h-5 w-5 mr-2" /> },
     { name: "Journey", href: "/journey", icon: <Map className="h-5 w-5 mr-2" /> },
-    { name: "Chinese Chatbot", href: "/chinese-chatbot", icon: <MessageCircle className="h-5 w-5 mr-2" /> },
   ]
 
   return (
