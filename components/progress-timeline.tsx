@@ -6,7 +6,8 @@ import { cn } from "@/lib/utils"
 const milestones = [
   { sentences: 5, label: "Beginner", unlocks: "Night City", achieved: true },
   { sentences: 10, label: "Novice", unlocks: "Bamboo Forest", achieved: true },
-  { sentences: 50, label: "Apprentice", unlocks: "Shanghai Skyline", achieved: false },
+  { sentences: 25, label: "Apprentice I", unlocks: "Night Village", achieved: false },
+  { sentences: 50, label: "Apprentice II", unlocks: "Shanghai Skyline", achieved: false },
   { sentences: 100, label: "Intermediate", unlocks: "Great Wall", achieved: false },
   { sentences: 200, label: "Advanced", unlocks: "Forbidden City", achieved: false },
   { sentences: 250, label: "Expert", unlocks: "Li River", achieved: false },

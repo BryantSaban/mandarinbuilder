@@ -16,12 +16,13 @@ export default function ProgressPage() {
     { name: "Night City", unlocked: true },
     { name: "Bamboo Forest", unlocked: true },
     { name: "Shanghai Skyline", unlocked: false },
+    { name: "Night Village", unlocked: true }, // New background
     { name: "Great Wall", unlocked: false },
     { name: "Forbidden City", unlocked: false },
     { name: "Li River", unlocked: false },
     { name: "Temple of Heaven", unlocked: false },
     { name: "Dragon's Gate", unlocked: false },
-    { name: "Celestial Palace", unlocked: false }, // New 1000-level background
+    { name: "Celestial Palace", unlocked: false }, // 1000-level background
   ]
 
   useEffect(() => {
@@ -110,7 +111,9 @@ export default function ProgressPage() {
                           ? "url('/images/journey-bg.png')"
                           : index === 1
                             ? "url('/images/acquire-bg.webp')"
-                            : "url('/placeholder.svg?height=100&width=200')",
+                            : index === 3
+                              ? "url('/images/night-village-bg.png')"
+                              : "url('/placeholder.svg?height=100&width=200')",
                     }}
                   />
                   <div className="absolute inset-0 bg-black/30 flex items-end p-2">

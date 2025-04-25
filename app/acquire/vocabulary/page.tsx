@@ -1,5 +1,7 @@
 "use client"
 
+import { DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+
 import { useState, useEffect } from "react"
 import NavigationMenu from "@/components/navigation-menu"
 import { Button } from "@/components/ui/button"
@@ -11,7 +13,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuSeparator,
   DropdownMenuGroup,
   DropdownMenuLabel,
@@ -117,7 +118,7 @@ export default function VocabularyPage() {
     <main className="min-h-screen flex flex-col relative bg-transparent dark:bg-transparent text-gray-900 dark:text-white">
       {/* Background Image with Overlay */}
       <div
-        className="fixed inset-0 bg-cover bg-center z-0 opacity-40 dark:opacity-20"
+        className="fixed inset-0 bg-cover bg-center z-0 opacity-80 dark:opacity-60"
         style={{ backgroundImage: "url('/images/acquire-bg.webp')" }}
       />
 

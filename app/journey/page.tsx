@@ -12,7 +12,7 @@ export default function JourneyPage() {
         className="fixed inset-0 bg-cover bg-center z-0"
         style={{ backgroundImage: "url('/images/journey-bg.png')" }}
       >
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/10" />
       </div>
 
       {/* Navigation Menu */}

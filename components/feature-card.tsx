@@ -88,7 +88,7 @@ export default function FeatureCard({ title, description, icon, color, href }: F
       case "Practice":
         return "url('/images/practice-bg.webp')"
       case "Journey":
-        return "url('/images/journey-bg.png')"
+        return "url('/images/night-village-bg.png')" // Updated to use the new background
       default:
         return "none"
     }

@@ -12,7 +12,7 @@ export default function AcquirePage() {
         className="fixed inset-0 bg-cover bg-center z-0"
         style={{ backgroundImage: "url('/images/acquire-bg.webp')" }}
       >
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/10" />
       </div>
 
       {/* Navigation Menu */}

@@ -50,6 +50,21 @@
 }
 
 @layer components {
+  /* Add this new animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  /* Keep existing styles */
   .animate-glow-outline {
     animation-delay: calc(var(--index, 0) * 0.1s);
   }

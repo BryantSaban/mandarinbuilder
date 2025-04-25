@@ -16,7 +16,7 @@ export default function PageLayout({ children, backgroundImage }: PageLayoutProp
     <main className="min-h-screen flex flex-col relative text-gray-900 dark:text-white">
       {/* Background Image */}
       <div className="fixed inset-0 bg-cover bg-center z-0" style={{ backgroundImage: `url('${backgroundImage}')` }}>
-        <div className="absolute inset-0 bg-black/30 dark:bg-black/50" />
+        <div className="absolute inset-0 bg-black/10 dark:bg-black/20" />
       </div>
 
       {/* Navigation Menu - will be hidden in art mode */}

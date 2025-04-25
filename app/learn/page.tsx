@@ -9,7 +9,7 @@ export default function LearnPage() {
     <main className="min-h-screen flex flex-col relative text-white">
       {/* Background Image */}
       <div className="fixed inset-0 bg-cover bg-center z-0" style={{ backgroundImage: "url('/images/learn-bg.webp')" }}>
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/10" />
       </div>
 
       {/* Navigation Menu */}

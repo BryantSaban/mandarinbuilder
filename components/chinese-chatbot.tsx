@@ -3,11 +3,9 @@
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Send, User, Bot, Mic, MicOff, Loader2, VolumeIcon as VolumeUp, VolumeX, Settings } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Send, Loader2, VolumeIcon as VolumeUp, VolumeX } from "lucide-react"
 import { useChat } from "ai/react"
-import { cleanupAudio } from "@/lib/audio-utils"
-import SettingsModal from "@/components/settings-modal"
+import ChatMessage from "./chat-message"
 
 interface Message {
   id: string
@@ -16,13 +14,10 @@ interface Message {
   timestamp: Date
 }
 
-export default function ChatInterface() {
+export default function ChineseChatbot() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const [isRecording, setIsRecording] = useState(false)
   const [autoPlayAudio, setAutoPlayAudio] = useState(false)
   const [isProcessingAudio, setIsProcessingAudio] = useState(false)
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [voiceChatEnabled, setVoiceChatEnabled] = useState(true)
   const [voicesLoaded, setVoicesLoaded] = useState(false)
   const [displayMessages, setDisplayMessages] = useState<Message[]>([
     {
@@ -33,10 +28,9 @@ export default function ChatInterface() {
       timestamp: new Date(),
     },
   ])
-  const recognitionRef = useRef<any>(null)
 
   // Use the AI SDK's useChat hook for handling chat state and API calls
-  const { messages, input, handleInputChange, handleSubmit, isLoading, error, setInput } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
     api: "/api/chat",
     initialMessages: [
       {
@@ -51,55 +45,8 @@ export default function ChatInterface() {
     },
   })
 
-  // Initialize speech recognition and synthesis
+  // Initialize speech synthesis
   useEffect(() => {
-    // Initialize speech recognition
-    if (typeof window !== "undefined") {
-      // Check if the browser supports the Web Speech API
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-
-      if (SpeechRecognition) {
-        // Create a new recognition instance
-        const recognition = new SpeechRecognition()
-
-        // Configure recognition
-        recognition.continuous = false
-        recognition.interimResults = true
-        recognition.lang = "zh-CN" // Set language to Mandarin Chinese, but can be changed to English
-
-        // Set up event handlers
-        recognition.onresult = (event) => {
-          const transcript = Array.from(event.results)
-            .map((result) => result[0].transcript)
-            .join("")
-
-          setInput(transcript)
-
-          // If this is a final result
-          if (event.results[0].isFinal) {
-            // Auto submit after a short delay
-            setTimeout(() => {
-              const submitEvent = new Event("submit", { cancelable: true, bubbles: true })
-              document.querySelector("form")?.dispatchEvent(submitEvent)
-            }, 500)
-          }
-        }
-
-        recognition.onerror = (event) => {
-          console.error("Speech recognition error", event)
-          setIsRecording(false)
-        }
-
-        recognition.onend = () => {
-          setIsRecording(false)
-        }
-
-        // Store the recognition instance in the ref
-        recognitionRef.current = recognition
-      }
-    }
-
-    // Initialize speech synthesis
     if (typeof window !== "undefined" && window.speechSynthesis) {
       // Load voices
       const loadVoices = () => {
@@ -115,21 +62,7 @@ export default function ChatInterface() {
       // Chrome needs this event to load voices
       window.speechSynthesis.onvoiceschanged = loadVoices
     }
-
-    return () => {
-      // Clean up
-      if (recognitionRef.current) {
-        recognitionRef.current.abort()
-      }
-      cleanupAudio()
-    }
-  }, [setInput])
-
-  // Extract Chinese text from message
-  const extractChineseText = (content: string): string => {
-    const match = content.match(/^([^(]+)/)
-    return match ? match[1].trim() : ""
-  }
+  }, [])
 
   // Process new message from AI
   const processNewMessage = async (message: any) => {
@@ -151,6 +84,12 @@ export default function ChatInterface() {
         }
       }
     }
+  }
+
+  // Extract Chinese text from message
+  const extractChineseText = (content: string): string => {
+    const match = content.match(/^([^(]+)/)
+    return match ? match[1].trim() : ""
   }
 
   // Handle playing audio for a message
@@ -279,113 +218,47 @@ export default function ChatInterface() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
 
-  const toggleRecording = () => {
-    if (!recognitionRef.current) {
-      console.error("Speech recognition not available")
-      return
-    }
-
-    if (isRecording) {
-      // Stop listening
-      recognitionRef.current.stop()
-      setIsRecording(false)
-    } else {
-      // Start listening
-      setInput("")
-      setIsRecording(true)
-
-      try {
-        recognitionRef.current.start()
-      } catch (err) {
-        console.error("Failed to start speech recognition:", err)
-        setIsRecording(false)
-      }
-    }
-  }
-
   return (
     <div className="flex flex-col h-full bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-xl border border-purple-300/50 dark:border-purple-500/30 overflow-hidden">
       <div className="p-4 bg-purple-500/10 dark:bg-purple-600/20 border-b border-purple-200 dark:border-purple-800 flex justify-between items-center">
         <div>
-          <h2 className="text-lg font-semibold text-purple-800 dark:text-purple-300">Conversation Practice</h2>
+          <h2 className="text-lg font-semibold text-purple-800 dark:text-purple-300">Chinese Conversation Practice</h2>
           <p className="text-sm text-purple-600 dark:text-purple-400">Practice your Mandarin with Xiao Mei</p>
         </div>
-        <div className="flex space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className={`border-purple-200 dark:border-purple-700 ${
-              autoPlayAudio
-                ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300"
-                : "text-purple-600 dark:text-purple-400"
-            }`}
-            onClick={() => setAutoPlayAudio(!autoPlayAudio)}
-          >
-            {autoPlayAudio ? (
-              <>
-                <VolumeUp className="h-4 w-4 mr-2" />
-                Auto-Play On
-              </>
-            ) : (
-              <>
-                <VolumeX className="h-4 w-4 mr-2" />
-                Auto-Play Off
-              </>
-            )}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-purple-200 dark:border-purple-700 text-purple-600 dark:text-purple-400"
-            onClick={() => setIsSettingsOpen(true)}
-          >
-            <Settings className="h-4 w-4" />
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className={`border-purple-200 dark:border-purple-700 ${
+            autoPlayAudio
+              ? "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300"
+              : "text-purple-600 dark:text-purple-400"
+          }`}
+          onClick={() => setAutoPlayAudio(!autoPlayAudio)}
+        >
+          {autoPlayAudio ? (
+            <>
+              <VolumeUp className="h-4 w-4 mr-2" />
+              Auto-Play On
+            </>
+          ) : (
+            <>
+              <VolumeX className="h-4 w-4 mr-2" />
+              Auto-Play Off
+            </>
+          )}
+        </Button>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {displayMessages.map((message) => (
-          <div key={message.id} className={cn("flex", message.role === "user" ? "justify-end" : "justify-start")}>
-            {message.role === "user" ? (
-              <div className="bg-purple-100 dark:bg-purple-900/30 text-gray-800 dark:text-white rounded-lg rounded-tr-none p-3 max-w-[80%]">
-                <div className="flex items-center mb-1">
-                  <User className="h-4 w-4 mr-1 text-purple-600 dark:text-purple-400" />
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                  </span>
-                </div>
-                <p className="whitespace-pre-wrap">{message.content}</p>
-              </div>
-            ) : (
-              <div className="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white rounded-lg rounded-tl-none p-3 max-w-[80%]">
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center">
-                    <Bot className="h-4 w-4 mr-1 text-purple-600 dark:text-purple-400" />
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                    </span>
-                  </div>
-                  {extractChineseText(message.content) && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 w-6 p-1 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-full ml-2"
-                      onClick={() => handlePlayAudio(extractChineseText(message.content))}
-                      disabled={isProcessingAudio}
-                    >
-                      {isProcessingAudio ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <VolumeUp className="h-4 w-4" />
-                      )}
-                    </Button>
-                  )}
-                </div>
-                <p className="whitespace-pre-wrap">{message.content}</p>
-              </div>
-            )}
-          </div>
+          <ChatMessage
+            key={message.id}
+            content={message.content}
+            role={message.role}
+            timestamp={message.timestamp}
+            isProcessingAudio={isProcessingAudio}
+            onPlayAudio={handlePlayAudio}
+          />
         ))}
 
         {/* Loading indicator */}
@@ -421,44 +294,22 @@ export default function ChatInterface() {
 
       <div className="p-4 border-t border-purple-200 dark:border-purple-800 bg-gray-50 dark:bg-gray-800/50">
         <form onSubmit={handleSubmit} className="flex space-x-2">
-          {voiceChatEnabled && (
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              className={cn(
-                "border-purple-200 dark:border-purple-700",
-                isRecording ? "text-red-600 dark:text-red-400 animate-pulse" : "text-purple-600 dark:text-purple-400",
-              )}
-              onClick={toggleRecording}
-            >
-              {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-            </Button>
-          )}
           <Input
             value={input}
             onChange={handleInputChange}
-            placeholder={isRecording ? "Listening..." : "Type your message..."}
+            placeholder="Type your message..."
             className="border-purple-200 dark:border-purple-700 focus:ring-purple-500"
             disabled={isLoading}
           />
           <Button
             type="submit"
             className="bg-purple-600 hover:bg-purple-700 text-white"
-            disabled={isLoading || (!input.trim() && !isRecording)}
+            disabled={isLoading || !input.trim()}
           >
             {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
           </Button>
         </form>
       </div>
-
-      {/* Settings Modal */}
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        voiceChatEnabled={voiceChatEnabled}
-        setVoiceChatEnabled={setVoiceChatEnabled}
-      />
     </div>
   )
 }
