@@ -3,11 +3,25 @@
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Send, User, Bot, Mic, MicOff, Loader2, VolumeIcon as VolumeUp, VolumeX, Settings } from "lucide-react"
+import {
+  Send,
+  User,
+  Bot,
+  Mic,
+  MicOff,
+  Loader2,
+  VolumeIcon as VolumeUp,
+  VolumeX,
+  Settings,
+  AlertCircle,
+} from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useChat } from "ai/react"
 import { cleanupAudio } from "@/lib/audio-utils"
 import SettingsModal from "@/components/settings-modal"
+
+// Define valid voice options
+const VALID_VOICES = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]
 
 interface Message {
   id: string
@@ -24,6 +38,7 @@ export default function ChatInterface() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [voiceChatEnabled, setVoiceChatEnabled] = useState(true)
   const [selectedVoice, setSelectedVoice] = useState("alloy")
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [displayMessages, setDisplayMessages] = useState<Message[]>([
     {
       id: "welcome",
@@ -151,8 +166,24 @@ export default function ChatInterface() {
   // Handle playing audio for a message
   const handlePlayAudio = async (text: string) => {
     setIsProcessingAudio(true)
+    setErrorMessage(null) // Clear any previous errors
+
     try {
       console.log("Requesting TTS for text:", text.substring(0, 20) + "...")
+
+      // Ensure we have a valid voice
+      let safeVoice = "alloy" // Default fallback
+      if (typeof selectedVoice === "string" && VALID_VOICES.includes(selectedVoice)) {
+        safeVoice = selectedVoice
+      }
+
+      // Create a simple payload with only the required fields
+      const payload = {
+        text: text,
+        voice: safeVoice,
+      }
+
+      console.log("Sending TTS request with payload:", JSON.stringify(payload))
 
       // Get the audio data from our API
       const response = await fetch("/api/tts", {
@@ -160,9 +191,10 @@ export default function ChatInterface() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text, voice: selectedVoice }),
+        body: JSON.stringify(payload),
       })
 
+      // Parse the response
       const data = await response.json()
 
       if (!response.ok) {
@@ -182,9 +214,11 @@ export default function ChatInterface() {
       } else {
         throw new Error("No audio data received from API")
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error playing audio:", error)
-      showErrorToast(`Could not play audio: ${error instanceof Error ? error.message : "Unknown error"}`)
+      const errorMsg = error instanceof Error ? error.message : "Unknown error"
+      setErrorMessage(`Could not play audio: ${errorMsg}`)
+      showErrorToast(`Could not play audio: ${errorMsg}`)
     } finally {
       setIsProcessingAudio(false)
     }
@@ -245,7 +279,13 @@ export default function ChatInterface() {
 
   // Helper function to show error toast
   const showErrorToast = (message: string) => {
+    const existingToast = document.getElementById("error-toast")
+    if (existingToast) {
+      document.body.removeChild(existingToast)
+    }
+
     const errorMessage = document.createElement("div")
+    errorMessage.id = "error-toast"
     errorMessage.textContent = message
     errorMessage.style.cssText =
       "position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(220, 38, 38, 0.9); color: white; padding: 12px 20px; border-radius: 8px; z-index: 9999; font-size: 14px; max-width: 80%; text-align: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);"
@@ -254,8 +294,10 @@ export default function ChatInterface() {
     console.error("Error toast shown:", message)
 
     setTimeout(() => {
-      document.body.removeChild(errorMessage)
-    }, 5000) // Show for 5 seconds instead of 3
+      if (document.body.contains(errorMessage)) {
+        document.body.removeChild(errorMessage)
+      }
+    }, 5000) // Show for 5 seconds
   }
 
   // Update display messages when user sends a message
@@ -417,9 +459,13 @@ export default function ChatInterface() {
         )}
 
         {/* Error message */}
-        {error && (
-          <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg text-sm">
-            Error: {error.message || "Failed to send message. Please try again."}
+        {(error || errorMessage) && (
+          <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg text-sm flex items-start">
+            <AlertCircle className="h-5 w-5 mr-2 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-medium">Error</p>
+              <p>{error?.message || errorMessage || "Failed to send message. Please try again."}</p>
+            </div>
           </div>
         )}
 

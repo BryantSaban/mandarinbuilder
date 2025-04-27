@@ -2,8 +2,11 @@
 
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Mic, X, Loader2 } from "lucide-react"
+import { Mic, X, Loader2, AlertCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
+
+// Define valid voice options
+const VALID_VOICES = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]
 
 interface VoiceTutorInterfaceProps {
   onClose: () => void
@@ -15,6 +18,7 @@ export default function VoiceTutorInterface({ onClose, selectedVoice = "nova" }:
   const [userSpeech, setUserSpeech] = useState("")
   const [isProcessing, setIsProcessing] = useState(false)
   const [tutorResponse, setTutorResponse] = useState("")
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const recognitionRef = useRef<any>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
@@ -82,6 +86,7 @@ export default function VoiceTutorInterface({ onClose, selectedVoice = "nova" }:
 
   const handleUserInput = async (transcript: string) => {
     setIsProcessing(true)
+    setErrorMessage(null) // Clear any previous errors
 
     try {
       // Simulate AI processing
@@ -104,8 +109,9 @@ export default function VoiceTutorInterface({ onClose, selectedVoice = "nova" }:
         // Play the Chinese part of the response
         await playAudio(chineseText[1].trim())
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error processing speech:", error)
+      setErrorMessage(`Failed to process your speech: ${error.message || "Unknown error"}`)
     } finally {
       setIsProcessing(false)
     }
@@ -125,6 +131,7 @@ export default function VoiceTutorInterface({ onClose, selectedVoice = "nova" }:
       // Start listening
       setUserSpeech("")
       setTutorResponse("")
+      setErrorMessage(null)
       setIsListening(true)
 
       try {
@@ -141,13 +148,27 @@ export default function VoiceTutorInterface({ onClose, selectedVoice = "nova" }:
     try {
       console.log("Voice tutor requesting TTS for text:", text.substring(0, 20) + "...")
 
+      // Ensure we have a valid voice
+      let safeVoice = "nova" // Default fallback
+      if (typeof selectedVoice === "string" && VALID_VOICES.includes(selectedVoice)) {
+        safeVoice = selectedVoice
+      }
+
+      // Create a simple payload with only the required fields
+      const payload = {
+        text: text,
+        voice: safeVoice,
+      }
+
+      console.log("Voice tutor sending TTS request with payload:", JSON.stringify(payload))
+
       // Get the audio data from our API
       const response = await fetch("/api/tts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text, voice: selectedVoice }),
+        body: JSON.stringify(payload),
       })
 
       if (!response.ok) {
@@ -170,9 +191,9 @@ export default function VoiceTutorInterface({ onClose, selectedVoice = "nova" }:
       } else {
         throw new Error("No audio data received from API")
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Voice tutor error playing audio:", error)
-      // Consider adding a visual error indicator here
+      setErrorMessage(`Failed to play audio: ${error.message || "Unknown error"}`)
     }
   }
 
@@ -258,6 +279,14 @@ export default function VoiceTutorInterface({ onClose, selectedVoice = "nova" }:
       {tutorResponse && (
         <div className="mb-12 max-w-lg text-center">
           <p className="text-white text-xl font-medium">{tutorResponse}</p>
+        </div>
+      )}
+
+      {/* Error message */}
+      {errorMessage && (
+        <div className="mb-8 max-w-lg bg-red-500/20 p-4 rounded-lg flex items-start">
+          <AlertCircle className="h-5 w-5 text-red-400 mr-2 flex-shrink-0 mt-0.5" />
+          <p className="text-red-300 text-sm">{errorMessage}</p>
         </div>
       )}
 
