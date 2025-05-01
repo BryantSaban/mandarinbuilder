@@ -75,7 +75,7 @@ export default function ConversationPage() {
       {/* Background Image */}
       <div
         className="fixed inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: "url('/images/practice-bg.webp')" }}
+        style={{ backgroundImage: "url('/images/practice-bg-chinese.webp')" }}
       >
         <div className="absolute inset-0 bg-black/10 dark:bg-black/20" />
       </div>

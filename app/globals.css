@@ -69,6 +69,21 @@
     animation-delay: calc(var(--index, 0) * 0.1s);
   }
 
+  @keyframes glow-outline {
+    from {
+      text-shadow: 0 0 0px rgba(255, 255, 255, 0);
+      color: rgba(255, 255, 255, 0);
+    }
+    50% {
+      text-shadow: 0 0 10px rgba(74, 222, 128, 0.8), 0 0 20px rgba(74, 222, 128, 0.5);
+      color: rgba(74, 222, 128, 0.7);
+    }
+    to {
+      text-shadow: 0 0 5px rgba(74, 222, 128, 0.6), 0 0 10px rgba(74, 222, 128, 0.4);
+      color: rgba(255, 255, 255, 0);
+    }
+  }
+
   /* Page transition effects */
   .page-transition-enter {
     opacity: 0;

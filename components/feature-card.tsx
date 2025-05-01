@@ -54,8 +54,8 @@ export default function FeatureCard({ title, description, icon, color, href }: F
   }
 
   const getIconColor = () => {
-    // Return yellow color for all card types
-    return "text-yellow-500 group-hover:text-yellow-400"
+    // Return purple color for all card types
+    return "text-purple-500 group-hover:text-purple-400"
   }
 
   const getTitleColor = () => {
@@ -84,11 +84,11 @@ export default function FeatureCard({ title, description, icon, color, href }: F
       case "Acquire":
         return "url('/images/acquire-bg.webp')"
       case "Learn":
-        return "url('/images/learn-bg.webp')"
+        return "url('/images/learn-bg-chinese.webp')"
       case "Practice":
-        return "url('/images/practice-bg.webp')"
+        return "url('/images/practice-bg-chinese.webp')"
       case "Journey":
-        return "url('/images/night-village-bg.png')" // Updated to use the new background
+        return "url('/images/journey-bg-chinese.png')"
       default:
         return "none"
     }

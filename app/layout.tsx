@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 export const metadata = {
   title: "Mandarin Builder",
   description: "The most efficient way to master Mandarin through immersive learning",
-    generator: 'v0.dev'
+  generator: "v0.dev",
 }
 
 export default function RootLayout({

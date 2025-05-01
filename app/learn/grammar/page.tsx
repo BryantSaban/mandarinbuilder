@@ -75,7 +75,10 @@ export default function GrammarPage() {
   return (
     <main className="min-h-screen flex flex-col relative text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-900">
       {/* Background Image */}
-      <div className="fixed inset-0 bg-cover bg-center z-0" style={{ backgroundImage: "url('/images/learn-bg.webp')" }}>
+      <div
+        className="fixed inset-0 bg-cover bg-center z-0"
+        style={{ backgroundImage: "url('/images/learn-bg-chinese.webp')" }}
+      >
         <div className="absolute inset-0 bg-black/20 dark:bg-black/50" />
       </div>
 

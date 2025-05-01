@@ -10,7 +10,7 @@ export default function JourneyPage() {
       {/* Background Image */}
       <div
         className="fixed inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: "url('/images/journey-bg.png')" }}
+        style={{ backgroundImage: "url('/images/journey-bg-chinese.png')" }}
       >
         <div className="absolute inset-0 bg-black/10" />
       </div>

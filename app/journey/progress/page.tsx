@@ -35,7 +35,7 @@ export default function ProgressPage() {
   }, [])
 
   return (
-    <PageLayout backgroundImage="/images/journey-bg.png">
+    <PageLayout backgroundImage="/images/journey-bg-chinese.png">
       <div
         className="container mx-auto px-4 py-12 flex-1 flex flex-col relative z-10 transition-opacity duration-800"
         style={{ opacity: isLoading ? 0 : 1 }}

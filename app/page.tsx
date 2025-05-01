@@ -93,8 +93,8 @@ export default function Home() {
               </span>
             </h1>
             <p
-              className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 to-yellow-300 drop-shadow-lg shadow-yellow-400/50"
-              style={{ textShadow: "0 0 15px rgba(250, 204, 21, 0.5), 0 0 25px rgba(250, 204, 21, 0.3)" }}
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-green-200 drop-shadow-lg shadow-green-400/50"
+              style={{ textShadow: "0 0 15px rgba(74, 222, 128, 0.5), 0 0 25px rgba(74, 222, 128, 0.3)" }}
             >
               Immersion Redefined
             </p>
@@ -111,7 +111,7 @@ export default function Home() {
           </div>
 
           <Link href="/signup" className="mt-4 inline-block">
-            <Button className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-white px-8 py-6 text-lg rounded-full">
+            <Button className="bg-gradient-to-r from-purple-700 to-purple-500 hover:from-purple-600 hover:to-purple-400 text-white px-8 py-6 text-lg rounded-full">
               Start Your Journey
               <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
@@ -225,7 +225,7 @@ export default function Home() {
             Join thousands of learners who have transformed their language skills with Mandarin Builder
           </p>
           <Link href="/signup">
-            <Button className="bg-gradient-to-r from-red-700 to-red-500 hover:from-red-600 hover:to-red-400 text-white px-8 py-6 text-lg rounded-full">
+            <Button className="bg-gradient-to-r from-purple-700 to-purple-500 hover:from-purple-600 hover:to-purple-400 text-white px-8 py-6 text-lg rounded-full">
               Get Started Now
             </Button>
           </Link>
@@ -237,7 +237,7 @@ export default function Home() {
         <div className="container px-4 md:px-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
-              <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-600">
+              <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-purple-600">
                 Mandarin Builder
               </h3>
               <p className="text-zinc-500 text-sm mt-1">
