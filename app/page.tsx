@@ -238,7 +238,7 @@ export default function Home() {
         <div className="container px-4 md:px-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
-              <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-purple-600">
+              <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-yellow-400">
                 Mandarin Builder
               </h3>
               <p className="text-zinc-500 text-sm mt-1">

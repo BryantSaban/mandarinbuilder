@@ -1,16 +1,11 @@
-// app/api/tts/route.ts
 import { NextResponse } from "next/server"
-import OpenAI from "openai"
 
-// Server-only Node.js function
 export const runtime = "nodejs"
 export const maxDuration = 10
 
 const VALID_VOICES = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]
 
-// Google Translate TTS fallback
 async function getGoogleTTS(text: string) {
-  console.log("🚧 Fallback: Google TTS for text:", text)
   const url =
     "https://translate.google.com/translate_tts" +
     "?ie=UTF-8" +
@@ -19,91 +14,78 @@ async function getGoogleTTS(text: string) {
     "&client=tw-ob"
 
   const resp = await fetch(url)
-  if (!resp.ok) {
-    throw new Error(`Google TTS failed: ${resp.status}`)
-  }
+  if (!resp.ok) throw new Error(`Google TTS failed: ${resp.status}`)
 
-  const buffer = await resp.arrayBuffer()
-  const b64 = Buffer.from(buffer).toString("base64")
-  return NextResponse.json(
-    { text, audioData: `data:audio/mp3;base64,${b64}`, fallback: true },
-    { status: 200 }
-  )
+  const buf = await resp.arrayBuffer()
+  return NextResponse.json({
+    text,
+    audioData: `data:audio/mp3;base64,${Buffer.from(buf).toString("base64")}`,
+    fallback: true,
+  })
 }
 
 export async function POST(req: Request) {
-  // 1) Parse + debug
-  const body = await req.json().catch(() => ({}))
-  console.log("▶️ TTS handler body:", body)
-  console.log("   – API key present?", Boolean(process.env.MANDARINBUILDER_API_KEY))
-  console.log("   – raw voice param:", body.voice)
-
-  // 2) Validate text
-  const text = typeof body.text === "string" ? body.text.trim() : ""
+  // 1) Parse + validate
+  const { text: _text, voice: _voice } = await req.json().catch(() => ({}))
+  const text = typeof _text === "string" ? _text.trim() : ""
   if (!text) {
-    return NextResponse.json(
-      { error: "Missing or invalid `text` parameter." },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: "Missing or invalid `text`." }, { status: 400 })
   }
 
-  // 3) Safe voice selection
-  let voice: typeof VALID_VOICES[number] = "alloy"
-  if (typeof body.voice === "string" && VALID_VOICES.includes(body.voice)) {
-    voice = body.voice
+  // 2) Voice normalization
+  let voice = "alloy"
+  if (typeof _voice === "string") {
+    const v = _voice.toLowerCase()
+    if (VALID_VOICES.includes(v)) voice = v
   }
-  console.log("   – using voice:", voice)
 
-  // 4) Read your Vercel var
+  // 3) API key
   const key = process.env.MANDARINBUILDER_API_KEY
   if (!key) {
-    console.error("❌ Missing MANDARINBUILDER_API_KEY")
     return NextResponse.json(
-      { error: "Server misconfiguration: missing API key." },
+      { error: "Server error: missing API key." },
       { status: 500 }
     )
   }
 
-  // 5) Call OpenAI TTS
-  try {
-    const openai = new OpenAI({ apiKey: key, dangerouslyAllowBrowser: true })
-    const tts = await openai.audio.speech.create({
-      model: "tts-1",
-      voice,
-      input: text,
-    })
-    const arrayBuffer = await tts.arrayBuffer()
-    const b64 = Buffer.from(arrayBuffer).toString("base64")
-    return NextResponse.json({ text, audioData: `data:audio/mp3;base64,${b64}` })
-  } catch (err: any) {
-    const status = err.response?.status
-    console.error("❌ OpenAI TTS error:", err.message, "status=", status)
+  // 4) Direct fetch to OpenAI TTS endpoint
+  const apiRes = await fetch("https://api.openai.com/v1/audio/speech", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ model: "tts-1", voice, input: text }),
+  })
 
-    // 5a) Quota → Google fallback
-    if (status === 429) {
-      try {
-        return await getGoogleTTS(text)
-      } catch (googleErr) {
-        console.error("❌ Google TTS fallback failed:", googleErr)
-        return NextResponse.json(
-          { error: "Voice service is unavailable." },
-          { status: 503 }
-        )
-      }
-    }
-
-    // 5b) Unauthorized → billing/key error
-    if ([401, 402].includes(status)) {
+  if (apiRes.status === 429) {
+    // quota hit → fallback
+    try {
+      return await getGoogleTTS(text)
+    } catch {
       return NextResponse.json(
-        { error: "TTS unauthorized—check your billing & API key." },
-        { status: 403 }
+        { error: "Voice service unavailable (Google fallback failed)." },
+        { status: 503 }
       )
     }
+  }
 
-    // 5c) Other failures
+  if (apiRes.status === 401 || apiRes.status === 402) {
     return NextResponse.json(
-      { error: "Text-to-speech service is unavailable. Please try again later." },
+      { error: "TTS unauthorized—check billing & API key." },
+      { status: 403 }
+    )
+  }
+
+  if (!apiRes.ok) {
+    return NextResponse.json(
+      { error: "Text-to-speech service is unavailable." },
       { status: 503 }
     )
   }
+
+  // 5) Success: return audio
+  const arrayBuffer = await apiRes.arrayBuffer()
+  const base64 = Buffer.from(arrayBuffer).toString("base64")
+  return NextResponse.json({ text, audioData: `data:audio/mp3;base64,${base64}` })
 }
