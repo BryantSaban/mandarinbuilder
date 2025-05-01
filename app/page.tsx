@@ -111,7 +111,7 @@ export default function Home() {
           </div>
 
           <Link href="/signup" className="mt-4 inline-block">
-            <Button className="bg-gradient-to-r from-yellow-600 to-yellow-400 hover:from-yellow-500 hover:to-yellow-300 text-white px-8 py-6 text-lg rounded-full">
+            <Button className="bg-gradient-to-r from-yellow-600 to-yellow-400 hover:from-yellow-500 hover:to-yellow-300 text-white px-8 py-6 text-lg rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/20 active:scale-95">
               Start Your Journey
               <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
@@ -225,8 +225,9 @@ export default function Home() {
             Join thousands of learners who have transformed their language skills with Mandarin Builder
           </p>
           <Link href="/signup">
-            <Button className="bg-gradient-to-r from-yellow-600 to-yellow-400 hover:from-yellow-500 hover:to-yellow-300 text-white px-8 py-6 text-lg rounded-full">
-              Get Started Now
+            <Button className="bg-gradient-to-r from-yellow-600 to-yellow-400 hover:from-yellow-500 hover:to-yellow-300 text-white px-8 py-6 text-lg rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/20 active:scale-95 relative overflow-hidden group">
+              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-yellow-400/40 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+              <span className="relative z-10">Get Started Now</span>
             </Button>
           </Link>
         </div>

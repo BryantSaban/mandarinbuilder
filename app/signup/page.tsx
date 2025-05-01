@@ -162,10 +162,11 @@ export default function SignupPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-white"
+                  className="w-full bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-white transition-all duration-300 hover:scale-[1.02] hover:shadow-md hover:shadow-yellow-500/20 active:scale-[0.98] relative overflow-hidden group"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Creating Account..." : "Create Account"}
+                  <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-yellow-400/40 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+                  <span className="relative z-10">{isSubmitting ? "Creating Account..." : "Create Account"}</span>
                 </Button>
 
                 <p className="text-sm text-gray-600 dark:text-gray-400 text-center mt-4">

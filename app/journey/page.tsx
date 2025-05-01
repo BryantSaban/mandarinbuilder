@@ -48,8 +48,9 @@ export default function JourneyPage() {
 
           <div className="flex justify-center">
             <FadeTransition href="/journey/progress">
-              <Button className="bg-yellow-600 hover:bg-yellow-700 text-white px-8 py-3 text-lg rounded-full">
-                View Your Journey
+              <Button className="bg-yellow-600 hover:bg-yellow-700 text-white px-8 py-3 text-lg rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/20 active:scale-95 relative overflow-hidden group">
+                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-yellow-400/30 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+                <span className="relative z-10">View Your Journey</span>
               </Button>
             </FadeTransition>
           </div>
