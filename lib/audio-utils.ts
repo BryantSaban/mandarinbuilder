@@ -4,11 +4,11 @@ export function playAudio(text: string, fallbackUrl?: string): Promise<void> {
     try {
       // If we have a fallback URL, use it directly
       if (fallbackUrl) {
-        const audio = new Audio(fallbackUrl)
+        const audio = new Audio()
 
         const handleCanPlay = () => {
-          audio.play().catch(() => {
-            console.warn("Fallback audio playback failed")
+          audio.play().catch((err) => {
+            console.warn("Fallback audio playback failed:", err)
             resolve()
           })
         }
@@ -21,8 +21,11 @@ export function playAudio(text: string, fallbackUrl?: string): Promise<void> {
           resolve()
         }
 
-        const handleError = () => {
-          console.warn("Fallback audio error")
+        const handleError = (e: Event) => {
+          console.warn("Fallback audio error:", e)
+          if (audio.error) {
+            console.warn("Audio error code:", audio.error.code)
+          }
           clearTimeout(timeout)
           resolve()
         }
@@ -33,13 +36,21 @@ export function playAudio(text: string, fallbackUrl?: string): Promise<void> {
 
         // Set timeout in case audio never loads
         const timeout = setTimeout(() => {
+          console.warn("Fallback audio timeout")
           audio.removeEventListener("canplaythrough", handleCanPlay)
           audio.removeEventListener("ended", handleEnded)
           audio.removeEventListener("error", handleError)
           resolve()
         }, 5000)
 
-        audio.load()
+        try {
+          audio.src = fallbackUrl
+          audio.load()
+        } catch (err) {
+          console.error("Error setting fallback audio source:", err)
+          clearTimeout(timeout)
+          resolve()
+        }
       } else {
         // No fallback URL provided
         console.warn("No audio URL provided")

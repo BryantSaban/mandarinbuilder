@@ -10,7 +10,7 @@ export default function AcquirePage() {
       {/* Background Image */}
       <div
         className="fixed inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: "url('/images/acquire-bg.webp')" }}
+        style={{ backgroundImage: "url('/images/acquire-bg-new.png')" }}
       >
         <div className="absolute inset-0 bg-black/10" />
       </div>

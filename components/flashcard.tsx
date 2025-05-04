@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -14,9 +16,11 @@ interface FlashcardProps {
     pinyin?: string
     examples: string[]
   }[]
+  onWordHover?: (word: string, event: React.MouseEvent) => void
+  onWordLeave?: () => void
 }
 
-export default function Flashcard({ cards }: FlashcardProps) {
+export default function Flashcard({ cards, onWordHover, onWordLeave }: FlashcardProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isFlipped, setIsFlipped] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
@@ -38,6 +42,30 @@ export default function Flashcard({ cards }: FlashcardProps) {
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
+  }
+
+  const renderHoverableText = (text: string) => {
+    // Split the text into individual characters for Chinese text
+    const characters = text.split("")
+
+    return (
+      <span>
+        {characters.map((char, index) => (
+          <span
+            key={index}
+            className={
+              char.match(/[\u4e00-\u9fa5]/)
+                ? "hover:bg-blue-100 dark:hover:bg-blue-800/50 cursor-pointer transition-colors duration-200"
+                : ""
+            }
+            onMouseEnter={char.match(/[\u4e00-\u9fa5]/) && onWordHover ? (e) => onWordHover(char, e) : undefined}
+            onMouseLeave={char.match(/[\u4e00-\u9fa5]/) && onWordLeave ? onWordLeave : undefined}
+          >
+            {char}
+          </span>
+        ))}
+      </span>
+    )
   }
 
   const currentCard = cards[currentIndex]
@@ -82,7 +110,7 @@ export default function Flashcard({ cards }: FlashcardProps) {
               )}
             >
               <div className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4">
-                {currentCard.front}
+                {renderHoverableText(currentCard.front)}
               </div>
               {currentCard.pinyin && (
                 <div className="text-xl text-gray-600 dark:text-gray-300 mb-6">{currentCard.pinyin}</div>
@@ -108,7 +136,7 @@ export default function Flashcard({ cards }: FlashcardProps) {
                       key={idx}
                       className="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                     >
-                      {example}
+                      {renderHoverableText(example)}
                     </div>
                   ))}
                 </div>

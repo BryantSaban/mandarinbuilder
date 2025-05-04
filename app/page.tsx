@@ -93,8 +93,8 @@ export default function Home() {
               </span>
             </h1>
             <p
-              className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-200 drop-shadow-lg shadow-yellow-400/50"
-              style={{ textShadow: "0 0 15px rgba(234, 179, 8, 0.5), 0 0 25px rgba(234, 179, 8, 0.3)" }}
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-pink-400 drop-shadow-lg shadow-fuchsia-400/50"
+              style={{ textShadow: "0 0 15px rgba(219, 39, 119, 0.5), 0 0 25px rgba(219, 39, 119, 0.3)" }}
             >
               Immersion Redefined
             </p>
@@ -111,7 +111,7 @@ export default function Home() {
           </div>
 
           <Link href="/signup" className="mt-4 inline-block">
-            <Button className="bg-gradient-to-r from-yellow-600 to-yellow-400 hover:from-yellow-500 hover:to-yellow-300 text-white px-8 py-6 text-lg rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/20 active:scale-95">
+            <Button className="bg-gradient-to-r from-fuchsia-600 to-pink-400 hover:from-fuchsia-500 hover:to-pink-300 text-white px-8 py-6 text-lg rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-fuchsia-500/20 active:scale-95">
               Start Your Journey
               <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
@@ -206,7 +206,7 @@ export default function Home() {
             </div>
 
             <div className="bg-zinc-900/60 backdrop-blur-sm p-6 rounded-lg border border-zinc-800">
-              <h3 className="text-xl font-bold mb-3 text-yellow-500">The Future</h3>
+              <h3 className="text-xl font-bold mb-3 text-fuchsia-500">The Future</h3>
               <p className="text-zinc-400">
                 Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Donec ullamcorper nulla non metus
                 auctor fringilla. Maecenas faucibus mollis interdum. Fusce dapibus, tellus ac cursus commodo, tortor
@@ -225,8 +225,8 @@ export default function Home() {
             Join thousands of learners who have transformed their language skills with Mandarin Builder
           </p>
           <Link href="/signup">
-            <Button className="bg-gradient-to-r from-yellow-600 to-yellow-400 hover:from-yellow-500 hover:to-yellow-300 text-white px-8 py-6 text-lg rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-yellow-500/20 active:scale-95 relative overflow-hidden group">
-              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-yellow-400/40 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+            <Button className="bg-gradient-to-r from-fuchsia-600 to-pink-400 hover:from-fuchsia-500 hover:to-pink-300 text-white px-8 py-6 text-lg rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-fuchsia-500/20 active:scale-95 relative overflow-hidden group">
+              <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-pink-400/40 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
               <span className="relative z-10">Get Started Now</span>
             </Button>
           </Link>
@@ -238,7 +238,7 @@ export default function Home() {
         <div className="container px-4 md:px-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
-              <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-yellow-400">
+              <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-pink-400">
                 Mandarin Builder
               </h3>
               <p className="text-zinc-500 text-sm mt-1">

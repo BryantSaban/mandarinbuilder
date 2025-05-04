@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 import { useState, useEffect } from "react"
@@ -18,6 +20,8 @@ import {
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { getHsk } from "@/lib/getHsk"
+import HoverCard from "@/components/HoverCard"
 
 // Sample flashcard data
 const sampleCards = [
@@ -101,6 +105,22 @@ export default function VocabularyPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [currentDeck, setCurrentDeck] = useState(sampleDecks[0])
+  const [hoveredWord, setHoveredWord] = useState<string | null>(null)
+  const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 })
+  const hskData = getHsk()
+
+  const handleWordHover = (word: string, event: React.MouseEvent) => {
+    setHoveredWord(word)
+    // Position the hover card near the cursor but not directly under it
+    setHoverPosition({
+      x: event.clientX + 10,
+      y: event.clientY + 10,
+    })
+  }
+
+  const handleWordLeave = () => {
+    setHoveredWord(null)
+  }
 
   // Filter topics based on search query
   const filteredTopics = sampleTopics.filter((topic) => topic.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -119,7 +139,7 @@ export default function VocabularyPage() {
       {/* Background Image with Overlay */}
       <div
         className="fixed inset-0 bg-cover bg-center z-0 opacity-80 dark:opacity-60"
-        style={{ backgroundImage: "url('/images/acquire-bg.webp')" }}
+        style={{ backgroundImage: "url('/images/acquire-bg-new.png')" }}
       />
 
       {/* Navigation Menu */}
@@ -232,7 +252,7 @@ export default function VocabularyPage() {
 
           {/* Flashcard Section */}
           <div className="flex justify-center mb-8">
-            <Flashcard cards={sampleCards} />
+            <Flashcard cards={sampleCards} onWordHover={handleWordHover} onWordLeave={handleWordLeave} />
           </div>
 
           {/* Stats Cards */}
@@ -328,6 +348,18 @@ export default function VocabularyPage() {
           </Button>
         </Link>
       </div>
+      {/* Hover Card */}
+      {hoveredWord && (
+        <div
+          className="fixed z-50 pointer-events-none"
+          style={{
+            left: `${hoverPosition.x}px`,
+            top: `${hoverPosition.y}px`,
+          }}
+        >
+          <HoverCard word={hoveredWord} />
+        </div>
+      )}
     </main>
   )
 }

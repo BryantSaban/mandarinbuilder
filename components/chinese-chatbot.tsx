@@ -142,6 +142,7 @@ export default function ChineseChatbot() {
       audio.oncanplaythrough = () => {
         audio.play().catch((err) => {
           console.error("Audio play error:", err)
+          showErrorToast("Failed to play audio. Your browser might be blocking autoplay.")
           resolve()
         })
       }
@@ -151,13 +152,36 @@ export default function ChineseChatbot() {
       }
 
       audio.onerror = (e) => {
+        // Create a more descriptive error message
         console.error("Audio error:", e)
+        let errorMsg = "Failed to load audio"
+
+        if (audio.error) {
+          // Add specific error code information if available
+          switch (audio.error.code) {
+            case MediaError.MEDIA_ERR_ABORTED:
+              errorMsg = "Audio playback was aborted"
+              break
+            case MediaError.MEDIA_ERR_NETWORK:
+              errorMsg = "Network error while loading audio"
+              break
+            case MediaError.MEDIA_ERR_DECODE:
+              errorMsg = "Audio decoding error"
+              break
+            case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
+              errorMsg = "Audio format not supported by your browser"
+              break
+          }
+        }
+
+        showErrorToast(errorMsg)
         resolve()
       }
 
       // Set a timeout in case the audio never loads or plays
       const timeout = setTimeout(() => {
         console.warn("Audio playback timeout")
+        showErrorToast("Audio playback timed out. Please try again.")
         resolve()
       }, 5000)
 
@@ -171,9 +195,16 @@ export default function ChineseChatbot() {
         resolve()
       }
 
-      // Set the source and load
-      audio.src = dataUrl
-      audio.load()
+      try {
+        // Set the source and load
+        audio.src = dataUrl
+        audio.load()
+      } catch (err) {
+        console.error("Error setting audio source:", err)
+        showErrorToast("Error preparing audio playback")
+        clearTimeout(timeout)
+        resolve()
+      }
     })
   }
 
