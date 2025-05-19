@@ -1,0 +1,37 @@
+[
+  {
+    "hanzi": "认为",
+    "pinyin": "rèn wéi",
+    "translations": ["to think", "to believe", "to consider"],
+    "sentence": "我认为这个想法很好。",
+    "sentence_translation": "I think this idea is very good."
+  },
+  {
+    "hanzi": "希望",
+    "pinyin": "xī wàng",
+    "translations": ["to hope", "to wish", "hope"],
+    "sentence": "我希望明天天气好。",
+    "sentence_translation": "I hope the weather will be good tomorrow."
+  },
+  {
+    "hanzi": "觉得",
+    "pinyin": "jué de",
+    "translations": ["to feel", "to think"],
+    "sentence": "我觉得这个电影很有意思。",
+    "sentence_translation": "I feel this movie is very interesting."
+  },
+  {
+    "hanzi": "应该",
+    "pinyin": "yīng gāi",
+    "translations": ["should", "ought to", "must"],
+    "sentence": "你应该多休息。",
+    "sentence_translation": "You should rest more."
+  },
+  {
+    "hanzi": "可能",
+    "pinyin": "kě néng",
+    "translations": ["maybe", "perhaps", "possible", "probable"],
+    "sentence": "明天可能会下雨。",
+    "sentence_translation": "It might rain tomorrow."
+  }
+]

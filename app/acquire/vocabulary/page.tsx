@@ -129,6 +129,12 @@ export default function VocabularyPage() {
     // Simulate loading
     const timer = setTimeout(() => {
       setIsLoading(false)
+
+      // Check if HSK data is available
+      const data = getHsk()
+      if (!data || data.length === 0) {
+        console.error("HSK data could not be loaded")
+      }
     }, 800)
 
     return () => clearTimeout(timer)

@@ -8,10 +8,11 @@ import { getHsk } from "../lib/getHsk"
  */
 export default function HoverCard({ word }) {
   const entry = getHsk().find((e) => e.word === word)
+  const [playing, setPlaying] = useState(false) // Move useState to the top
+
   if (!entry) return null
 
   const audio = entry.audioSrc ? new Audio(entry.audioSrc) : null
-  const [playing, setPlaying] = useState(false)
 
   return (
     <div className="w-64 p-4 bg-white rounded-lg shadow-lg">
@@ -34,10 +35,24 @@ export default function HoverCard({ word }) {
         )}
       </div>
 
-      <p className="italic text-sm text-gray-700 mb-3">{entry.definitions.join("； ")}</p>
+      <p className="italic text-sm text-gray-700 mb-3">
+        {Array.isArray(entry.definitions) ? entry.definitions.join("； ") : entry.definitions}
+      </p>
 
-      <blockquote className="border-l-4 border-gray-300 pl-3 italic text-gray-800 mb-1">"{entry.sentence}"</blockquote>
-      <p className="text-gray-600 text-sm">— {entry.sentence_translation}</p>
+      {entry.sentence && (
+        <>
+          <blockquote className="border-l-4 border-gray-300 pl-3 italic text-gray-800 mb-1">
+            "{entry.sentence}"
+          </blockquote>
+          <p className="text-gray-600 text-sm">— {entry.sentence_translation}</p>
+        </>
+      )}
+
+      {entry.level && (
+        <div className="mt-2 text-xs font-semibold inline-block py-1 px-2 rounded-full bg-blue-100 text-blue-700">
+          HSK Level {entry.level}
+        </div>
+      )}
     </div>
   )
 }

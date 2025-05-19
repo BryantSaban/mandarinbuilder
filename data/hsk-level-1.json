@@ -1,0 +1,37 @@
+[
+  {
+    "hanzi": "我",
+    "pinyin": "wǒ",
+    "translations": ["I", "me", "my"],
+    "sentence": "我是学生。",
+    "sentence_translation": "I am a student."
+  },
+  {
+    "hanzi": "你",
+    "pinyin": "nǐ",
+    "translations": ["you", "your"],
+    "sentence": "你好吗？",
+    "sentence_translation": "How are you?"
+  },
+  {
+    "hanzi": "好",
+    "pinyin": "hǎo",
+    "translations": ["good", "well", "fine", "OK", "nice"],
+    "sentence": "今天天气很好。",
+    "sentence_translation": "The weather is very good today."
+  },
+  {
+    "hanzi": "是",
+    "pinyin": "shì",
+    "translations": ["to be", "is", "are", "am"],
+    "sentence": "他是我的朋友。",
+    "sentence_translation": "He is my friend."
+  },
+  {
+    "hanzi": "不",
+    "pinyin": "bù",
+    "translations": ["no", "not"],
+    "sentence": "我不知道。",
+    "sentence_translation": "I don't know."
+  }
+]

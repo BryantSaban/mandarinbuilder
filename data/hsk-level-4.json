@@ -1,0 +1,37 @@
+[
+  {
+    "hanzi": "经济",
+    "pinyin": "jīng jì",
+    "translations": ["economy", "economic"],
+    "sentence": "中国的经济发展很快。",
+    "sentence_translation": "China's economy is developing rapidly."
+  },
+  {
+    "hanzi": "环境",
+    "pinyin": "huán jìng",
+    "translations": ["environment", "surroundings"],
+    "sentence": "我们应该保护环境。",
+    "sentence_translation": "We should protect the environment."
+  },
+  {
+    "hanzi": "影响",
+    "pinyin": "yǐng xiǎng",
+    "translations": ["to influence", "to affect", "influence", "effect"],
+    "sentence": "这件事会影响你的决定吗？",
+    "sentence_translation": "Will this matter influence your decision?"
+  },
+  {
+    "hanzi": "文化",
+    "pinyin": "wén huà",
+    "translations": ["culture", "cultural"],
+    "sentence": "我对中国文化很感兴趣。",
+    "sentence_translation": "I'm very interested in Chinese culture."
+  },
+  {
+    "hanzi": "发展",
+    "pinyin": "fā zhǎn",
+    "translations": ["to develop", "development", "growth"],
+    "sentence": "这个城市发展得很快。",
+    "sentence_translation": "This city is developing very quickly."
+  }
+]

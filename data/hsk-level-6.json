@@ -1,0 +1,37 @@
+[
+  {
+    "hanzi": "抽象",
+    "pinyin": "chōu xiàng",
+    "translations": ["abstract", "to abstract"],
+    "sentence": "这个概念太抽象了，我不太理解。",
+    "sentence_translation": "This concept is too abstract, I don't quite understand it."
+  },
+  {
+    "hanzi": "综合",
+    "pinyin": "zōng hé",
+    "translations": ["comprehensive", "to synthesize", "integrated"],
+    "sentence": "我们需要综合考虑各种因素。",
+    "sentence_translation": "We need to comprehensively consider various factors."
+  },
+  {
+    "hanzi": "推测",
+    "pinyin": "tuī cè",
+    "translations": ["to speculate", "to conjecture", "speculation"],
+    "sentence": "我只能推测他为什么没来。",
+    "sentence_translation": "I can only speculate why he didn't come."
+  },
+  {
+    "hanzi": "论证",
+    "pinyin": "lùn zhèng",
+    "translations": ["to demonstrate", "to prove", "to argue", "argumentation"],
+    "sentence": "他的论文很好地论证了这个理论。",
+    "sentence_translation": "His thesis well demonstrated this theory."
+  },
+  {
+    "hanzi": "假设",
+    "pinyin": "jiǎ shè",
+    "translations": ["to assume", "to suppose", "hypothesis", "assumption"],
+    "sentence": "让我们假设这个理论是正确的。",
+    "sentence_translation": "Let's assume this theory is correct."
+  }
+]

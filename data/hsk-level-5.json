@@ -1,0 +1,37 @@
+[
+  {
+    "hanzi": "政策",
+    "pinyin": "zhèng cè",
+    "translations": ["policy", "measure", "guideline"],
+    "sentence": "政府推出了新的经济政策。",
+    "sentence_translation": "The government has introduced new economic policies."
+  },
+  {
+    "hanzi": "措施",
+    "pinyin": "cuò shī",
+    "translations": ["measure", "step", "action"],
+    "sentence": "我们需要采取措施解决这个问题。",
+    "sentence_translation": "We need to take measures to solve this problem."
+  },
+  {
+    "hanzi": "理论",
+    "pinyin": "lǐ lùn",
+    "translations": ["theory", "theoretical"],
+    "sentence": "这个理论已经被证明是正确的。",
+    "sentence_translation": "This theory has been proven to be correct."
+  },
+  {
+    "hanzi": "观点",
+    "pinyin": "guān diǎn",
+    "translations": ["viewpoint", "opinion", "perspective"],
+    "sentence": "我不同意你的观点。",
+    "sentence_translation": "I don't agree with your viewpoint."
+  },
+  {
+    "hanzi": "原则",
+    "pinyin": "yuán zé",
+    "translations": ["principle", "doctrine", "rule"],
+    "sentence": "我们必须坚持这个原则。",
+    "sentence_translation": "We must adhere to this principle."
+  }
+]

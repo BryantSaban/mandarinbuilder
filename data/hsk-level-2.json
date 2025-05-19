@@ -1,0 +1,37 @@
+[
+  {
+    "hanzi": "朋友",
+    "pinyin": "péng yǒu",
+    "translations": ["friend"],
+    "sentence": "他是我的好朋友。",
+    "sentence_translation": "He is my good friend."
+  },
+  {
+    "hanzi": "学生",
+    "pinyin": "xué shēng",
+    "translations": ["student"],
+    "sentence": "我是一个学生。",
+    "sentence_translation": "I am a student."
+  },
+  {
+    "hanzi": "老师",
+    "pinyin": "lǎo shī",
+    "translations": ["teacher"],
+    "sentence": "她是我的老师。",
+    "sentence_translation": "She is my teacher."
+  },
+  {
+    "hanzi": "现在",
+    "pinyin": "xiàn zài",
+    "translations": ["now", "at present", "currently"],
+    "sentence": "现在几点了？",
+    "sentence_translation": "What time is it now?"
+  },
+  {
+    "hanzi": "工作",
+    "pinyin": "gōng zuò",
+    "translations": ["work", "job", "to work"],
+    "sentence": "我喜欢我的工作。",
+    "sentence_translation": "I like my job."
+  }
+]

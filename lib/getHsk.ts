@@ -1,23 +1,35 @@
 // lib/getHsk.ts
-import lvl1 from '../data/hsk-vocab-json/hsk-level-1.json'
-import lvl2 from '../data/hsk-vocab-json/hsk-level-2.json'
-import lvl3 from '../data/hsk-vocab-json/hsk-level-3.json'
-import lvl4 from '../data/hsk-vocab-json/hsk-level-4.json'
-import lvl5 from '../data/hsk-vocab-json/hsk-level-5.json'
-import lvl6 from '../data/hsk-vocab-json/hsk-level-6.json'
+import lvl1 from "../data/hsk-level-1.json"
+import lvl2 from "../data/hsk-level-2.json"
+import lvl3 from "../data/hsk-level-3.json"
+import lvl4 from "../data/hsk-level-4.json"
+import lvl5 from "../data/hsk-level-5.json"
+import lvl6 from "../data/hsk-level-6.json"
 
-function transform(raw: any[], level: number) {
-  return raw.map(e => ({
-    word: e.hanzi,
+export interface HskEntry {
+  word: string
+  pinyin: string
+  definitions: string[]
+  sentence: string
+  sentence_translation: string
+  level: number
+  audioSrc?: string
+}
+
+function transform(raw: any[], level: number): HskEntry[] {
+  return raw.map((e) => ({
+    word: e.hanzi || e.word,
     pinyin: e.pinyin,
-    definitions: e.translations,
-    sentence: e.sentence || '',
-    sentence_translation: e.sentence_translation || '',
+    definitions: e.translations || e.definitions || [],
+    sentence: e.sentence || "",
+    sentence_translation: e.sentence_translation || "",
     level,
+    audioSrc: e.audioSrc,
   }))
 }
 
-const allEntries = [
+// Combine all HSK levels into one array
+const allEntries: HskEntry[] = [
   ...transform(lvl1, 1),
   ...transform(lvl2, 2),
   ...transform(lvl3, 3),
@@ -26,6 +38,10 @@ const allEntries = [
   ...transform(lvl6, 6),
 ]
 
-export function getHsk() {
+/**
+ * Returns the full HSK 1–6 dataset
+ * @returns {HskEntry[]}
+ */
+export function getHsk(): HskEntry[] {
   return allEntries
 }
